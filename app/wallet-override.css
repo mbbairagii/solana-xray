@@ -1,0 +1,34 @@
+.wallet-adapter-button-trigger {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    height: auto !important;
+    width: auto !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #94A3B8 !important;
+    line-height: 1 !important;
+    transition: all 0.15s !important;
+    white-space: nowrap !important;
+}
+
+.wallet-adapter-button-trigger:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(126, 184, 201, 0.25) !important;
+    color: #F1F5F9 !important;
+}
+
+.wallet-adapter-button-trigger:not([disabled]) {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.wallet-adapter-button-trigger .wallet-adapter-button-start-icon {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 4px !important;
+    margin-right: 8px !important;
+}
