@@ -37,22 +37,24 @@ function isStaleResult(result: TSimulationResult): boolean {
     const e = result.error ?? '';
     const summary = result.humanSummary.toLowerCase();
 
-    // Only trust the error code — not summary text fallbacks
     const isStaleError =
         e.includes('IllegalOwner') ||
         e.includes('"IllegalOwner"') ||
         e.includes('AccountNotFound') ||
         e.includes('"AccountNotFound"') ||
         e.includes('InvalidAccountData') ||
-        e.includes('"InvalidAccountData"');
+        e.includes('"InvalidAccountData"') ||
+        e.includes('AddressLookupTableNotFound') ||
+        e.includes('address table') ||
+        e.includes('ConfirmedOnChain');
 
-    // Only match the two specific stale summaries we write intentionally
     const isStaleSummary =
         summary.includes('stale pool state') ||
         summary.includes('changed state since this transaction landed');
 
     return isStaleError || isStaleSummary;
 }
+
 
 
 export function SimulationResult({ result }: Props) {
@@ -76,7 +78,7 @@ export function SimulationResult({ result }: Props) {
     return (
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: '20px', overflow: 'hidden', fontFamily: 'Inter, sans-serif' }}>
 
-            {/* Header */}
+
             <div style={{ display: 'flex', alignItems: 'center', padding: '16px 24px', borderBottom: `1px solid ${C.border}`, gap: '10px' }}>
                 <span style={{
                     width: '9px', height: '9px', borderRadius: '50%', display: 'inline-block',
@@ -98,7 +100,7 @@ export function SimulationResult({ result }: Props) {
                 </span>
             </div>
 
-            {/* Summary */}
+
             <div style={{ padding: '14px 24px', background: 'rgba(255,255,255,0.02)', borderBottom: `1px solid ${C.border}` }}>
                 <p style={{ fontSize: '13px', color: C.textSecondary, margin: 0, lineHeight: 1.7 }}>
                     <span style={{ color: C.textPrimary, fontWeight: 600 }}>Summary: </span>
@@ -111,7 +113,7 @@ export function SimulationResult({ result }: Props) {
                 )}
             </div>
 
-            {/* Tabs */}
+
             <div style={{ display: 'flex', borderBottom: `1px solid ${C.border}`, overflowX: 'auto' }}>
                 {TABS.map((t) => (
                     <button
@@ -130,7 +132,7 @@ export function SimulationResult({ result }: Props) {
                 ))}
             </div>
 
-            {/* Tab Content */}
+
             <div style={{ padding: '28px 24px' }}>
 
                 {tab === 'overview' && (

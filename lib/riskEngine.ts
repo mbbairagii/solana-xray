@@ -9,9 +9,14 @@ export function isStaleError(error?: string | null): boolean {
         error.includes('AccountNotFound') ||
         error.includes('"AccountNotFound"') ||
         error.includes('InvalidAccountData') ||
-        error.includes('"InvalidAccountData"')
+        error.includes('"InvalidAccountData"') ||
+        error.includes('AddressLookupTableNotFound') ||
+        error.includes('address table') ||
+        error.includes('ConfirmedOnChain')
     );
 }
+
+
 
 export function analyzeRisk(
     instructions: DecodedInstruction[],

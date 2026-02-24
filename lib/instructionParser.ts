@@ -27,42 +27,77 @@ function shortKey(pk: string): string {
 function decodeSystemInstruction(ix: TransactionInstruction): Partial<DecodedInstruction> {
     try {
         const type = SystemInstruction.decodeInstructionType(ix);
-        switch (type) {
-            case 'Transfer': {
-                const decoded = SystemInstruction.decodeTransfer(ix);
-                const sol = Number(decoded.lamports) / 1e9;
-                return {
-                    type: 'SOL Transfer',
-                    description: `Transfer ${sol.toFixed(4)} SOL from ${shortKey(decoded.fromPubkey.toBase58())} to ${shortKey(decoded.toPubkey.toBase58())}`,
-                };
-            }
-            case 'CreateAccount': {
-                const decoded = SystemInstruction.decodeCreateAccount(ix);
-                return {
-                    type: 'Create Account',
-                    description: `Create new account ${shortKey(decoded.newAccountPubkey.toBase58())} owned by ${shortKey(decoded.programId.toBase58())}`,
-                };
-            }
-            case 'CreateAccountWithSeed': {
-                return { type: 'Create Account (with seed)', description: 'Create account derived from seed' };
-            }
-            case 'Assign': {
-                const decoded = SystemInstruction.decodeAssign(ix);
-                return {
-                    type: 'Assign',
-                    description: `Assign account to program ${shortKey(decoded.programId.toBase58())}`,
-                };
-            }
-            case 'Allocate': {
-                return { type: 'Allocate', description: 'Allocate space for account data' };
-            }
-            default:
-                return { type, description: `System: ${type}` };
+
+        if (type === 'Transfer') {
+            const decoded = SystemInstruction.decodeTransfer(ix);
+            const sol = Number(decoded.lamports) / 1e9;
+            return {
+                type: 'SOL Transfer',
+                description: `Transfer ${sol.toFixed(4)} SOL to ${shortKey(decoded.toPubkey.toBase58())}`,
+            };
         }
+
+        if (type === 'Create') {
+            const decoded = SystemInstruction.decodeCreateAccount(ix);
+            return {
+                type: 'Create Account',
+                description: `Create new account ${shortKey(decoded.newAccountPubkey.toBase58())}`,
+            };
+        }
+
+        if (type === 'CreateWithSeed') {
+            return {
+                type: 'Create Account (with seed)',
+                description: 'Create account derived from seed',
+            };
+        }
+
+        if (type === 'Assign') {
+            const decoded = SystemInstruction.decodeAssign(ix);
+            return {
+                type: 'Assign',
+                description: `Assign account to program ${shortKey(decoded.programId.toBase58())}`,
+            };
+        }
+
+        if (type === 'Allocate') {
+            return { type: 'Allocate', description: 'Allocate space for account' };
+        }
+
+        if (type === 'AllocateWithSeed') {
+            return { type: 'Allocate', description: 'Allocate space for account with seed' };
+        }
+
+        if (type === 'AssignWithSeed') {
+            return { type: 'Assign', description: 'Assign account to program with seed' };
+        }
+
+        if (type === 'TransferWithSeed') {
+            return { type: 'SOL Transfer', description: 'Transfer SOL with seed authority' };
+        }
+
+        if (type === 'AdvanceNonceAccount') {
+            return { type: 'Nonce', description: 'Advance nonce account' };
+        }
+
+        if (type === 'WithdrawNonceAccount') {
+            return { type: 'Nonce', description: 'Withdraw from nonce account' };
+        }
+
+        if (type === 'InitializeNonceAccount') {
+            return { type: 'Nonce', description: 'Initialize nonce account' };
+        }
+
+        if (type === 'AuthorizeNonceAccount') {
+            return { type: 'Nonce', description: 'Authorize nonce account' };
+        }
+
+        return { type: 'System', description: `System: ${type}` };
     } catch {
-        return { type: 'System Instruction', description: 'Unknown system instruction' };
+        return { type: 'System', description: 'System instruction' };
     }
 }
+
 
 function decodeTokenInstruction(ix: TransactionInstruction): Partial<DecodedInstruction> {
     try {

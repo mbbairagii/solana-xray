@@ -16,8 +16,6 @@ export const SolanaWalletProvider: FC<{ children: ReactNode }> = ({ children }) 
         () => [
             new PhantomWalletAdapter(),
             new SolflareWalletAdapter(),
-            // Backpack, Glow, and other Wallet Standard wallets
-            // auto-register themselves — no import needed
         ],
         []
     );
