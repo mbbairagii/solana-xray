@@ -10,11 +10,11 @@ export function useSimulator() {
     const [history, setHistory] = useState<{ input: string; result: SimulationResult }[]>([]);
     const wallet = useWallet();
 
-    const simulate = useCallback(async (input: string) => {
+    const simulate = useCallback(async (input: string, signature?: string) => {
         setLoading(true);
         setError(null);
         try {
-            const res = await simulateFromBase64(input.trim());
+            const res = await simulateFromBase64(input.trim(), signature);
             setResult(res);
             setHistory((prev) => [{ input: input.trim(), result: res }, ...prev.slice(0, 9)]);
         } catch (e: any) {

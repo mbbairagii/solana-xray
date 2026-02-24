@@ -4,28 +4,70 @@ import { useState } from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 interface Props {
-    onSimulate: (input: string) => void;
+    onSimulate: (input: string, signature?: string) => void;
     loading: boolean;
 }
 
-const DEMOS = [
-    { label: 'SOL Transfer', sig: 'REPLACE_WITH_REAL_SIG' },
-    { label: 'Pump.fun Swap', sig: 'REPLACE_WITH_REAL_SIG' },
-    { label: 'Token Approve', sig: 'REPLACE_WITH_REAL_SIG' },
-];
+const DEMOS: {
+    label: string;
+    title: string;
+    steps: string[];
+    link: string;
+    linkLabel: string;
+}[] = [
+        {
+            label: 'SOL Transfer',
+            title: 'How to test a SOL Transfer',
+            steps: [
+                'Open Solscan using the button below',
+                'Click any transaction labeled "SOL Transfer" from the feed',
+                'Copy the long signature string from the top of the page',
+                'Paste it in the input above and hit Fetch & Simulate',
+            ],
+            link: 'https://solscan.io/txs?filter=sol-transfer',
+            linkLabel: 'Open Solscan ↗',
+        },
+        {
+            label: 'Pump.fun Swap',
+            title: 'How to test a Pump.fun Swap',
+            steps: [
+                'Open Pump.fun using the button below',
+                'Click any token from the feed',
+                'Scroll to recent trades and click any trade row',
+                'It opens Solscan — copy the signature from the top',
+                'Paste it in the input above and hit Fetch & Simulate',
+            ],
+            link: 'https://pump.fun',
+            linkLabel: 'Open Pump.fun ↗',
+        },
+        {
+            label: 'Token Approve',
+            title: 'How to test a Token Approve',
+            steps: [
+                'Open Solscan SPL token transactions using the button below',
+                'Look for a transaction with type "Approve"',
+                'Click it and copy the signature from the top of the page',
+                'Paste it in the input above and hit Fetch & Simulate',
+            ],
+            link: 'https://solscan.io/txs?filter=spl-token',
+            linkLabel: 'Open Solscan SPL ↗',
+        },
+    ];
 
 const C = {
     bg: '#07090B',
     card: '#0C0F12',
     border: 'rgba(255,255,255,0.06)',
     borderFocus: 'rgba(126,184,201,0.35)',
-    borderHover: 'rgba(255,255,255,0.1)',
     textPrimary: '#F1F5F9',
     textSecondary: '#8896A5',
     textMuted: '#3D4F5C',
     hi: '#7EB8C9',
     hiDim: 'rgba(126,184,201,0.08)',
     hiBorder: 'rgba(126,184,201,0.18)',
+    amber: 'rgba(245,158,11,0.12)',
+    amberBorder: 'rgba(245,158,11,0.2)',
+    amberText: '#F59E0B',
 };
 
 export function TransactionInput({ onSimulate, loading }: Props) {
@@ -34,6 +76,7 @@ export function TransactionInput({ onSimulate, loading }: Props) {
     const [sig, setSig] = useState('');
     const [fetching, setFetching] = useState(false);
     const [fetchError, setFetchError] = useState('');
+    const [activeDemo, setActiveDemo] = useState<number | null>(null);
 
     const RPC = process.env.NEXT_PUBLIC_RPC_URL!;
     const isActive = fetching || loading;
@@ -43,6 +86,7 @@ export function TransactionInput({ onSimulate, loading }: Props) {
         if (!signature.trim()) return;
         setFetching(true);
         setFetchError('');
+        setActiveDemo(null);
         try {
             const res = await fetch(RPC, {
                 method: 'POST',
@@ -63,12 +107,17 @@ export function TransactionInput({ onSimulate, loading }: Props) {
                 setFetchError('Transaction not found. The signature may be invalid or too old.');
                 return;
             }
-            onSimulate(base64);
+            onSimulate(base64, signature.trim());
         } catch (e: any) {
             setFetchError(`Fetch failed: ${e.message}`);
         } finally {
             setFetching(false);
         }
+    };
+
+    const handleDemoClick = (index: number) => {
+        setActiveDemo(activeDemo === index ? null : index);
+        setFetchError('');
     };
 
     return (
@@ -130,7 +179,7 @@ export function TransactionInput({ onSimulate, loading }: Props) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <input
                         value={sig}
-                        onChange={(e) => { setSig(e.target.value); setFetchError(''); }}
+                        onChange={(e) => { setSig(e.target.value); setFetchError(''); setActiveDemo(null); }}
                         placeholder="Paste transaction signature…"
                         onKeyDown={(e) => { if (e.key === 'Enter') fetchFromSignature(sig); }}
                         style={{
@@ -197,29 +246,33 @@ export function TransactionInput({ onSimulate, loading }: Props) {
                             Or try a demo
                         </p>
                         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                            {DEMOS.map((d) => (
+                            {DEMOS.map((d, i) => (
                                 <button
                                     key={d.label}
-                                    onClick={() => { setSig(d.sig); fetchFromSignature(d.sig); }}
+                                    onClick={() => handleDemoClick(i)}
                                     disabled={isActive}
                                     style={{
                                         fontSize: '12px',
                                         fontWeight: 500,
                                         padding: '7px 14px',
                                         borderRadius: '8px',
-                                        border: `1px solid ${C.border}`,
-                                        background: 'transparent',
-                                        color: C.textMuted,
+                                        border: `1px solid ${activeDemo === i ? C.amberBorder : C.border}`,
+                                        background: activeDemo === i ? C.amber : 'transparent',
+                                        color: activeDemo === i ? C.amberText : C.textMuted,
                                         cursor: 'pointer',
                                         transition: 'all 0.15s',
                                     }}
                                     onMouseEnter={(e) => {
-                                        (e.currentTarget).style.borderColor = C.hiBorder;
-                                        (e.currentTarget).style.color = C.hi;
+                                        if (activeDemo !== i) {
+                                            e.currentTarget.style.borderColor = C.hiBorder;
+                                            e.currentTarget.style.color = C.hi;
+                                        }
                                     }}
                                     onMouseLeave={(e) => {
-                                        (e.currentTarget).style.borderColor = C.border;
-                                        (e.currentTarget).style.color = C.textMuted;
+                                        if (activeDemo !== i) {
+                                            e.currentTarget.style.borderColor = C.border;
+                                            e.currentTarget.style.color = C.textMuted;
+                                        }
                                     }}
                                 >
                                     {d.label}
@@ -227,6 +280,66 @@ export function TransactionInput({ onSimulate, loading }: Props) {
                             ))}
                         </div>
                     </div>
+
+                    {activeDemo !== null && (
+                        <div style={{
+                            background: C.amber,
+                            border: `1px solid ${C.amberBorder}`,
+                            borderRadius: '14px',
+                            padding: '18px 20px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px',
+                            animation: 'fadeIn 0.15s ease',
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <p style={{ fontSize: '13px', fontWeight: 700, color: C.amberText, margin: 0 }}>
+                                    💡 {DEMOS[activeDemo].title}
+                                </p>
+                                <button
+                                    onClick={() => setActiveDemo(null)}
+                                    style={{
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: C.textMuted, fontSize: '16px', lineHeight: 1, padding: '0 2px',
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+                            <ol style={{ margin: 0, paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                {DEMOS[activeDemo].steps.map((step, i) => (
+                                    <li key={i} style={{ fontSize: '12px', color: '#94A3B8', lineHeight: 1.6 }}>
+                                        {step}
+                                    </li>
+                                ))}
+                            </ol>
+
+                            <a
+                                href={DEMOS[activeDemo].link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    color: '#07090B',
+                                    background: C.amberText,
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    textDecoration: 'none',
+                                    width: 'fit-content',
+                                    transition: 'opacity 0.15s',
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+                            >
+                                {DEMOS[activeDemo].linkLabel}
+                            </a>
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -276,7 +389,10 @@ export function TransactionInput({ onSimulate, loading }: Props) {
                 </div>
             )}
 
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
         </div>
     );
 }
