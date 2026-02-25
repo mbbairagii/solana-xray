@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Solana TX X-Ray 🧬
 
-## Getting Started
+A transaction simulator and risk explainer for Solana. Paste any transaction
+signature or raw base64 — X-Ray decodes every instruction, scores the risk,
+and tells you exactly what it does before you sign anything.
 
-First, run the development server:
+Built as a tool I genuinely wish existed when I first started interacting
+with Solana dApps.
+
+---
+
+## What it does
+
+- **Simulates transactions** against live mainnet state — no signing, no fees,
+  no consequences
+- **Decodes every instruction** into plain language — transfers, approvals,
+  mints, closures
+- **Risk scoring** from 0–100 across unknown programs, unlimited approvals,
+  authority changes, and drain patterns
+- **CPI call tree** — visualizes the full cross-program invocation chain,
+  not just the surface-level instruction
+- **Account state diff** — shows every account before and after: SOL balances,
+  token amounts, ownership
+- **Scam pattern detection** — catches NFT authority hijacks, delegate traps,
+  unlimited approvals automatically
+
+---
+
+## Stack
+
+- **Next.js 15** (App Router, Server + Client Components)
+- **React** with TypeScript
+- **@solana/web3.js** for RPC calls and transaction parsing
+- **Solana Wallet Adapter** for Phantom/wallet connectivity
+- **Custom risk engine** — no third-party scoring, built from scratch
+
+---
+
+## How to run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone https://github.com/mbbairagii/solana-xray
+cd solana-xray
+npm install
