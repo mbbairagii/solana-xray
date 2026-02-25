@@ -1,6 +1,5 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { SimulateButton } from '@/components/SimulateButton';
+import { HoverCard } from '@/components/HoverCard';
 
 const FEATURES = [
   { icon: '🔬', title: 'Simulate Before Signing', desc: 'Dry-run any transaction against live chain state. Nothing executes, nothing is signed.' },
@@ -21,7 +20,6 @@ const C = {
   bg: '#07090B',
   card: '#0C0F12',
   border: 'rgba(255,255,255,0.06)',
-  borderHover: 'rgba(255,255,255,0.11)',
   textPrimary: '#F1F5F9',
   textSecondary: '#8896A5',
   textMuted: '#3D4F5C',
@@ -32,13 +30,12 @@ const C = {
 };
 
 export default function LandingPage() {
-  const router = useRouter();
-
   return (
     <main style={{ minHeight: '100vh', background: C.bg, color: C.textSecondary, fontFamily: 'Inter, sans-serif', position: 'relative', overflow: 'hidden' }}>
 
       <BgDistortion />
 
+      {/* ── Nav ── */}
       <nav style={{ position: 'relative', zIndex: 10, borderBottom: `1px solid ${C.border}`, padding: '18px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '18px' }}>🧬</span>
@@ -50,6 +47,7 @@ export default function LandingPage() {
         </div>
       </nav>
 
+      {/* ── Hero ── */}
       <section style={{ position: 'relative', zIndex: 10, maxWidth: '740px', margin: '0 auto', padding: '110px 24px 80px', textAlign: 'center' }}>
 
         <div style={{
@@ -71,29 +69,11 @@ export default function LandingPage() {
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <button
-            onClick={() => router.push('/app')}
-            style={{
-              background: C.hi, color: '#07090B',
-              fontWeight: 700, fontSize: '13px',
-              padding: '13px 34px', borderRadius: '10px',
-              border: 'none', cursor: 'pointer',
-              letterSpacing: '-0.1px', transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLButtonElement).style.opacity = '0.85';
-              (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLButtonElement).style.opacity = '1';
-              (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
-            }}
-          >
-            Open the Simulator →
-          </button>
+          <SimulateButton label="Open the Simulator →" padding="13px 34px" />
           <span style={{ fontSize: '11px', color: C.textFaint }}>No wallet connection required</span>
         </div>
 
+        {/* Mock card */}
         <div style={{ marginTop: '72px', background: 'rgba(12,15,18,0.85)', backdropFilter: 'blur(12px)', border: `1px solid ${C.border}`, borderRadius: '16px', overflow: 'hidden', textAlign: 'left', boxShadow: '0 30px 80px rgba(0,0,0,0.8)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '12px 18px', borderBottom: `1px solid ${C.border}` }}>
             <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(239,68,68,0.45)' }} />
@@ -112,13 +92,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section style={{ position: 'relative', zIndex: 10, borderTop: `1px solid ${C.border}`, padding: '80px 24px', background: 'rgba(7,9,11,0.6)', backdropFilter: 'blur(4px)' }}>
+      {/* ── How it works ── */}
+      <section style={{ position: 'relative', zIndex: 10, borderTop: `1px solid ${C.border}`, padding: '80px 24px', background: 'rgba(7,9,11,0.6)' }}>
         <div style={{ maxWidth: '860px', margin: '0 auto' }}>
           <SectionLabel>How it works</SectionLabel>
           <SectionTitle>Three steps to full transparency</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
             {STEPS.map((s) => (
-              <div key={s.n} style={{ background: 'rgba(12,15,18,0.8)', backdropFilter: 'blur(8px)', border: `1px solid ${C.border}`, borderRadius: '16px', padding: '26px', position: 'relative', overflow: 'hidden' }}>
+              <div key={s.n} style={{ background: 'rgba(12,15,18,0.8)', border: `1px solid ${C.border}`, borderRadius: '16px', padding: '26px', position: 'relative', overflow: 'hidden' }}>
                 <span style={{ position: 'absolute', top: '8px', right: '14px', fontSize: '52px', fontWeight: 900, color: 'rgba(255,255,255,0.018)', lineHeight: 1, userSelect: 'none' }}>{s.n}</span>
                 <p style={{ fontSize: '11px', color: C.hi, fontWeight: 600, marginBottom: '10px', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1px', opacity: 0.75 }}>{s.n}</p>
                 <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px', color: C.textPrimary }}>{s.title}</h3>
@@ -129,55 +110,38 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section style={{ position: 'relative', zIndex: 10, borderTop: `1px solid ${C.border}`, padding: '80px 24px', background: 'rgba(7,9,11,0.6)', backdropFilter: 'blur(4px)' }}>
+      {/* ── Features ── */}
+      <section style={{ position: 'relative', zIndex: 10, borderTop: `1px solid ${C.border}`, padding: '80px 24px', background: 'rgba(7,9,11,0.6)' }}>
         <div style={{ maxWidth: '980px', margin: '0 auto' }}>
           <SectionLabel>What it does</SectionLabel>
           <SectionTitle>Everything under the hood</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '10px' }}>
             {FEATURES.map((f) => (
-              <div
+              <HoverCard
                 key={f.title}
-                style={{ background: 'rgba(12,15,18,0.8)', backdropFilter: 'blur(8px)', border: `1px solid ${C.border}`, borderRadius: '14px', padding: '22px', transition: 'border-color 0.2s', cursor: 'default' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = C.borderHover; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = C.border; }}
+                style={{ background: 'rgba(12,15,18,0.8)', borderRadius: '14px', padding: '22px' }}
               >
                 <span style={{ fontSize: '22px', display: 'block', marginBottom: '12px' }}>{f.icon}</span>
                 <h3 style={{ fontSize: '13px', fontWeight: 700, color: C.textPrimary, marginBottom: '7px' }}>{f.title}</h3>
                 <p style={{ fontSize: '13px', color: C.textMuted, lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
-              </div>
+              </HoverCard>
             ))}
           </div>
         </div>
       </section>
 
-      <section style={{ position: 'relative', zIndex: 10, borderTop: `1px solid ${C.border}`, padding: '100px 24px', textAlign: 'center', background: 'rgba(7,9,11,0.5)', backdropFilter: 'blur(4px)' }}>
+      {/* ── CTA ── */}
+      <section style={{ position: 'relative', zIndex: 10, borderTop: `1px solid ${C.border}`, padding: '100px 24px', textAlign: 'center', background: 'rgba(7,9,11,0.5)' }}>
         <h2 style={{ fontSize: 'clamp(26px, 4vw, 44px)', fontWeight: 900, letterSpacing: '-1.5px', marginBottom: '14px', color: C.textPrimary }}>
           Blind signatures are how people get drained.
         </h2>
         <p style={{ fontSize: '15px', color: C.textMuted, marginBottom: '36px', maxWidth: '420px', margin: '0 auto 36px', lineHeight: 1.8 }}>
           It takes 10 seconds to simulate a transaction. That's all the time you need to know if it's safe.
         </p>
-        <button
-          onClick={() => router.push('/app')}
-          style={{
-            background: C.hi, color: '#07090B',
-            fontWeight: 700, fontSize: '13px',
-            padding: '13px 40px', borderRadius: '10px',
-            border: 'none', cursor: 'pointer', transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            (e.target as HTMLButtonElement).style.opacity = '0.85';
-            (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            (e.target as HTMLButtonElement).style.opacity = '1';
-            (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
-          }}
-        >
-          Simulate a Transaction →
-        </button>
+        <SimulateButton label="Simulate a Transaction →" padding="13px 40px" />
       </section>
 
+      {/* ── Footer ── */}
       <footer style={{ borderTop: `1px solid ${C.border}`, padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 10, background: 'rgba(7,9,11,0.7)', backdropFilter: 'blur(8px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: C.textFaint }}>
           <span>🧬</span><span>TX X-Ray · Built on Solana</span>
@@ -202,8 +166,11 @@ export default function LandingPage() {
 
 function BgDistortion() {
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+      willChange: 'transform',
+      transform: 'translateZ(0)',
+    }}>
       <div style={{
         position: 'absolute', inset: 0,
         backgroundImage: 'url(/x1.jpeg)',
@@ -235,7 +202,7 @@ function BgDistortion() {
         backgroundRepeat: 'repeat',
         backgroundSize: '180px 180px',
         opacity: 0.03,
-        animation: 'grain 0.4s steps(1) infinite',
+        animation: 'grain 1.2s steps(1) infinite',
         mixBlendMode: 'overlay',
       }} />
 
